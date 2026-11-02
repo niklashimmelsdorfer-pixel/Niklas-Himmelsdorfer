@@ -1,5 +1,6 @@
 [hidden] { display: none !important; }
 :root {
+  color-scheme: dark;
   --bg: #0b0b12;
   --bg-alt: #10101a;
   --card: #151522;
@@ -34,7 +35,7 @@ p { margin: 0 0 1em; }
 .grad { background: linear-gradient(90deg, var(--primary), var(--primary-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
 /* NAV */
-.nav { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: rgba(11,11,18,.75); border-bottom: 1px solid var(--border); }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; backdrop-filter: blur(12px); background: rgba(11,11,18,.75); border-bottom: 1px solid var(--border); }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
 .logo { font-weight: 800; font-size: 1.2rem; display: inline-flex; align-items: center; gap: 8px; letter-spacing: -.02em; }
 .logo.small { font-size: 1rem; }
@@ -172,3 +173,8 @@ p { margin: 0 0 1em; }
 /* FOOTER */
 .footer { border-top: 1px solid var(--border); padding: 28px 0; }
 .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+/* EXPORT MODAL */
+.modal { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.7); display: grid; place-items: center; padding: 16px; }
+.modal-box { max-width: 520px; width: 100%; max-height: 90vh; overflow: auto; display: grid; gap: 12px; }
+.modal-box img { width: 100%; border-radius: 10px; }

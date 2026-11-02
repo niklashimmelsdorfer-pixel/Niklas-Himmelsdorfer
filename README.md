@@ -14,7 +14,13 @@ Eigenständige Web-App zur geometrischen Analyse von Gesichtsproportionen (inspi
 - Lokaler Verlauf (localStorage) und Export der Auswertung als PNG
 
 ## Starten
-Rein statisch – kein Build nötig. Wegen ES-Modulen und Kamera über einen lokalen Server öffnen:
+**Am einfachsten:** `proportio.html` herunterladen und per Doppelklick im Browser öffnen (Chrome, Edge, Firefox, Safari). Alles steckt in dieser einen Datei; Internet wird nur zum einmaligen Laden des KI-Modells gebraucht.
+
+Hinweis: Auf github.com selbst wird HTML nur als Quelltext angezeigt – die Datei muss heruntergeladen oder über GitHub Pages bzw. einen Server geöffnet werden.
+
+`proportio.html` wird aus `index.html`, `styles.css` und `app.js` erzeugt: `python3 tools/build.py`
+
+Entwicklung mit lokalem Server (für die Kamera nötig):
 
 ```bash
 python3 -m http.server 8000
@@ -27,6 +33,8 @@ Deploybar auf GitHub Pages, Netlify, Vercel o. ä.
 - `index.html` – Landingpage + Analyzer
 - `styles.css` – Design
 - `app.js` – Landmarkenerkennung, Metrik-Berechnung, Scoring, UI
+- `proportio.html` – fertige Einzeldatei (generiert)
+- `tools/build.py` – erzeugt die Einzeldatei
 
 ## Hinweis
 Die Werte sind eine geometrische Orientierung auf Basis eines 2D-Fotos und hängen stark von Kamerawinkel, Brennweite und Mimik ab. Kein medizinischer Rat.

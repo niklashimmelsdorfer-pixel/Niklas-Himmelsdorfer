@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Proportio – KI-Gesichtsanalyse</title>
+  <title>Proportio Gesichtsanalyse</title>
   <meta name="description" content="Analysiere deine Gesichtsproportionen mit KI: Symmetrie, Gesichtsdrittel, Canthal Tilt, FWHR und mehr – direkt im Browser, ohne Upload." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -213,6 +213,14 @@
       <span class="muted small">© <span id="year"></span> Proportio · Analyse lokal im Browser · Kein medizinischer Rat</span>
     </div>
   </footer>
+
+  <div class="modal" id="exportModal" hidden>
+    <div class="modal-box card">
+      <img id="exportImg" alt="Exportierte Auswertung" />
+      <p class="muted small">Falls der Download nicht startet: Bild gedrückt halten bzw. Rechtsklick → „Bild speichern“.</p>
+      <div class="results-actions"><a class="btn btn-primary btn-sm" id="exportLink" href="#">PNG herunterladen</a><button class="btn btn-ghost btn-sm" id="exportClose">Schließen</button></div>
+    </div>
+  </div>
 
   <script type="module" src="app.js"></script>
 </body>

@@ -1,8 +1,14 @@
 // Proportio – lokale Gesichtsanalyse mit MediaPipe Face Landmarker
-import { FaceLandmarker, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
-
-const WASM_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
-const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
+// Pfade lassen sich über window.PROPORTIO_CONFIG überschreiben (z. B. für selbst gehostete Modelle)
+const MP_BASE = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+const CFG = Object.assign({
+  bundleUrl: `${MP_BASE}/vision_bundle.mjs`,
+  wasmLoaderUrl: `${MP_BASE}/wasm/vision_wasm_internal.js`,
+  wasmBinaryUrl: `${MP_BASE}/wasm/vision_wasm_internal.wasm`,
+  modelUrl: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+}, window.PROPORTIO_CONFIG || {});
+const abs = (u) => new URL(u, document.baseURI).href;
+let MP = null; // { FaceLandmarker, DrawingUtils }
 
 // ---------- Landmark-Indizes (MediaPipe Face Mesh, 478 Punkte) ----------
 const L = {
@@ -111,10 +117,18 @@ const ctx = canvas.getContext("2d");
 // ---------- Modell ----------
 async function getLandmarker() {
   if (landmarker) return landmarker;
-  const fileset = await FilesetResolver.forVisionTasks(WASM_URL);
-  const opts = (delegate) => ({ baseOptions: { modelAssetPath: MODEL_URL, delegate }, runningMode: "IMAGE", numFaces: 1 });
-  try { landmarker = await FaceLandmarker.createFromOptions(fileset, opts("GPU")); }
-  catch { landmarker = await FaceLandmarker.createFromOptions(fileset, opts("CPU")); }
+  try { MP = await import(CFG.bundleUrl); }
+  catch { throw new Error("Die KI-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und Werbe-/Skriptblocker für diese Seite deaktivieren."); }
+  const fileset = { wasmLoaderPath: abs(CFG.wasmLoaderUrl), wasmBinaryPath: abs(CFG.wasmBinaryUrl) };
+  let model;
+  try {
+    const r = await fetch(abs(CFG.modelUrl));
+    if (!r.ok) throw new Error(r.status);
+    model = new Uint8Array(await r.arrayBuffer());
+  } catch { throw new Error("Das KI-Modell konnte nicht geladen werden. Bitte Seite neu laden."); }
+  const opts = (delegate) => ({ baseOptions: { modelAssetBuffer: model, delegate }, runningMode: "IMAGE", numFaces: 1 });
+  try { landmarker = await MP.FaceLandmarker.createFromOptions(fileset, opts("GPU")); }
+  catch { landmarker = await MP.FaceLandmarker.createFromOptions(fileset, opts("CPU")); }
   return landmarker;
 }
 
@@ -230,7 +244,8 @@ function drawStage() {
   const { img, rawLms } = current;
   canvas.width = img.width; canvas.height = img.height;
   ctx.drawImage(img, 0, 0);
-  if (!rawLms) return;
+  if (!rawLms || !MP) return;
+  const { FaceLandmarker, DrawingUtils } = MP;
   const s = Math.max(1, img.width / 700);
   if ($("tglMesh").checked) {
     const du = new DrawingUtils(ctx);
@@ -404,7 +419,7 @@ function saveToHistory() {
   const h = getHistory();
   h.unshift({ date: Date.now(), total: current.total, thumb: thumb(), values: Object.fromEntries(current.results.map((r) => [r.id, r.value])) });
   setHistory(h.slice(0, 12));
-  renderHistory();
+renderHistory();
   $("saveBtn").textContent = "Gespeichert ✓";
   setTimeout(() => ($("saveBtn").textContent = "Im Verlauf speichern"), 1800);
 }
@@ -430,9 +445,11 @@ function exportImage() {
     x.fillStyle = scoreColor(r.score); x.fillText(fmt(r.score, 1), W - pad, y); x.textAlign = "left";
     y += rowH;
   }
-  const a = document.createElement("a");
-  a.download = `proportio-analyse-${new Date().toISOString().slice(0, 10)}.png`;
-  a.href = c.toDataURL("image/png"); a.click();
+  const url = c.toDataURL("image/png");
+  $("exportImg").src = url;
+  const a = $("exportLink");
+  a.href = url; a.download = `proportio-analyse-${new Date().toISOString().slice(0, 10)}.png`;
+  $("exportModal").hidden = false;
 }
 
 // Metrik-Infokarten
@@ -462,4 +479,6 @@ document.querySelectorAll(".seg-btn").forEach((b) => b.addEventListener("click",
   sex = b.dataset.sex;
   if (current?.lms) renderResults(evaluate(computeRaw(current.lms)));
 }));
+if (CFG.noCamera) $("camBtn").hidden = true;
+$("exportClose").addEventListener("click", () => ($("exportModal").hidden = true));
 renderHistory();
