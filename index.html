@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proportio – KI-Gesichtsanalyse</title>
+  <meta name="description" content="Analysiere deine Gesichtsproportionen mit KI: Symmetrie, Gesichtsdrittel, Canthal Tilt, FWHR und mehr – direkt im Browser, ohne Upload." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%237c5cff'/%3E%3Cpath d='M10 13h4M18 13h4M12 21q4 3 8 0' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="logo" href="#top"><span class="logo-dot"></span>Proportio</a>
+      <nav class="nav-links">
+        <a href="#features">Funktionen</a>
+        <a href="#how">So funktioniert's</a>
+        <a href="#metrics">Metriken</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="btn btn-primary btn-sm" href="#analyze">Jetzt analysieren</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="pill">KI-Gesichtsanalyse · 100 % im Browser</span>
+          <h1>Verstehe dein Gesicht – <span class="grad">Zahl für Zahl.</span></h1>
+          <p class="lead">Lade ein Frontalfoto hoch und erhalte in Sekunden eine detaillierte Auswertung deiner Gesichtsproportionen: Symmetrie, Gesichtsdrittel, Canthal Tilt, FWHR, Augenabstand und mehr – inklusive Gesamtscore und konkreter Tipps.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#analyze">Kostenlos analysieren</a>
+            <a class="btn btn-ghost" href="#metrics">Metriken ansehen</a>
+          </div>
+          <ul class="hero-stats">
+            <li><strong>478</strong><span>Gesichtspunkte</span></li>
+            <li><strong>13</strong><span>Metriken</span></li>
+            <li><strong>0</strong><span>Uploads auf Server</span></li>
+          </ul>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 300 360" class="face-svg">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#22d3ee"/>
+              </linearGradient>
+            </defs>
+            <path d="M150 20 C 70 20 50 90 52 160 C 54 230 90 300 150 335 C 210 300 246 230 248 160 C 250 90 230 20 150 20 Z" fill="none" stroke="url(#g1)" stroke-width="2.5"/>
+            <line x1="40" y1="118" x2="260" y2="118" class="guide"/>
+            <line x1="40" y1="215" x2="260" y2="215" class="guide"/>
+            <line x1="150" y1="10" x2="150" y2="350" class="guide"/>
+            <path d="M92 150 q 22 -14 44 -4" class="feat"/><path d="M164 146 q 22 -10 44 4" class="feat"/>
+            <circle cx="114" cy="152" r="5" class="dot"/><circle cx="186" cy="152" r="5" class="dot"/>
+            <path d="M150 160 L 140 208 Q 150 216 160 208" class="feat"/>
+            <path d="M118 250 Q 150 268 182 250" class="feat"/>
+            <g class="pts">
+              <circle cx="52" cy="160" r="3"/><circle cx="248" cy="160" r="3"/><circle cx="150" cy="335" r="3"/>
+              <circle cx="80" cy="260" r="3"/><circle cx="220" cy="260" r="3"/><circle cx="92" cy="150" r="3"/><circle cx="208" cy="150" r="3"/>
+            </g>
+          </svg>
+          <div class="score-chip"><span>Score</span><strong>7.8</strong></div>
+          <div class="tag-chip t1">Canthal Tilt +5.2°</div>
+          <div class="tag-chip t2">Symmetrie 94 %</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section">
+      <div class="container">
+        <h2 class="section-title">Alles, was du über dein Gesicht wissen willst</h2>
+        <div class="grid-3">
+          <article class="card feature"><div class="ico">◎</div><h3>Präzise Landmarken</h3><p>Ein neuronales Netz erkennt 478 Punkte in deinem Gesicht – inklusive Iris – als Grundlage für alle Messungen.</p></article>
+          <article class="card feature"><div class="ico">⚖</div><h3>Wissenschaftliche Ideale</h3><p>Jede Metrik wird mit Idealbereichen aus Anthropometrie und Ästhetik-Forschung verglichen und von 0–10 bewertet.</p></article>
+          <article class="card feature"><div class="ico">✦</div><h3>Konkrete Tipps</h3><p>Zu jeder Metrik bekommst du eine verständliche Erklärung und Ansatzpunkte – von Frisur über Grooming bis Haltung.</p></article>
+          <article class="card feature"><div class="ico">🔒</div><h3>Privat by Design</h3><p>Die Analyse läuft komplett lokal in deinem Browser. Dein Foto verlässt niemals dein Gerät.</p></article>
+          <article class="card feature"><div class="ico">📷</div><h3>Foto oder Kamera</h3><p>Lade ein Bild hoch oder nimm direkt mit der Webcam auf – mit Hinweisen für die optimale Aufnahme.</p></article>
+          <article class="card feature"><div class="ico">📈</div><h3>Verlauf & Export</h3><p>Speichere Ergebnisse lokal, vergleiche deinen Fortschritt und exportiere deine Auswertung als Bild.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section id="how" class="section alt">
+      <div class="container">
+        <h2 class="section-title">In drei Schritten zur Auswertung</h2>
+        <ol class="steps">
+          <li class="card"><span class="step-n">1</span><h3>Foto aufnehmen</h3><p>Frontal, neutraler Ausdruck, gerade Kopfhaltung, gleichmäßiges Licht, Haare aus dem Gesicht.</p></li>
+          <li class="card"><span class="step-n">2</span><h3>KI analysiert</h3><p>Landmarken werden erkannt, die Kopfneigung korrigiert und 13 Proportionen berechnet.</p></li>
+          <li class="card"><span class="step-n">3</span><h3>Ergebnis verstehen</h3><p>Gesamtscore, Einzelwerte mit Idealbereich, Overlay auf deinem Foto und Verbesserungstipps.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ANALYZER -->
+    <section id="analyze" class="section">
+      <div class="container">
+        <h2 class="section-title">Gesichtsanalyse starten</h2>
+        <div class="analyzer card">
+          <div class="analyzer-controls">
+            <div class="seg" role="radiogroup" aria-label="Geschlecht für Idealwerte">
+              <button class="seg-btn active" data-sex="m" role="radio" aria-checked="true">Männlich</button>
+              <button class="seg-btn" data-sex="f" role="radio" aria-checked="false">Weiblich</button>
+            </div>
+            <div class="analyzer-actions">
+              <label class="btn btn-primary">
+                Foto hochladen
+                <input id="fileInput" type="file" accept="image/*" hidden />
+              </label>
+              <button id="camBtn" class="btn btn-ghost">Kamera nutzen</button>
+            </div>
+          </div>
+
+          <div id="dropZone" class="dropzone">
+            <div class="dz-empty" id="dzEmpty">
+              <div class="dz-icon">⬆</div>
+              <p><strong>Bild hierher ziehen</strong> oder oben „Foto hochladen“ wählen</p>
+              <p class="muted small">JPG, PNG oder WebP · Frontalaufnahme · ein Gesicht</p>
+            </div>
+            <div class="stage" id="stage" hidden>
+              <canvas id="canvas"></canvas>
+              <video id="video" playsinline muted hidden></video>
+              <div class="stage-overlay" id="loader" hidden><div class="spinner"></div><p id="loaderText">KI-Modell wird geladen…</p></div>
+            </div>
+          </div>
+
+          <div class="cam-bar" id="camBar" hidden>
+            <button id="snapBtn" class="btn btn-primary">Foto aufnehmen</button>
+            <button id="camStop" class="btn btn-ghost">Abbrechen</button>
+          </div>
+
+          <div class="overlay-toggles" id="toggles" hidden>
+            <label><input type="checkbox" id="tglMesh" checked /> Landmarken</label>
+            <label><input type="checkbox" id="tglLines" checked /> Hilfslinien</label>
+          </div>
+
+          <p class="error" id="errorMsg" hidden></p>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="results" class="results" hidden>
+          <div class="results-head card">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 120 120" class="ring">
+                <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
+              </svg>
+              <div class="ring-label"><strong id="overallScore">–</strong><span>/ 10</span></div>
+            </div>
+            <div class="results-summary">
+              <h3 id="tierLabel">–</h3>
+              <p id="summaryText" class="muted"></p>
+              <div class="sub-scores" id="subScores"></div>
+              <div class="results-actions">
+                <button class="btn btn-primary btn-sm" id="saveBtn">Im Verlauf speichern</button>
+                <button class="btn btn-ghost btn-sm" id="exportBtn">Als Bild exportieren</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-filter="all">Alle</button>
+            <button class="tab" data-filter="harmony">Harmonie</button>
+            <button class="tab" data-filter="eyes">Augen</button>
+            <button class="tab" data-filter="midface">Mittelgesicht</button>
+            <button class="tab" data-filter="lower">Untergesicht</button>
+          </div>
+          <div class="metrics-grid" id="metricsGrid"></div>
+
+          <div class="card tips" id="tipsCard">
+            <h3>Deine Top-Ansatzpunkte</h3>
+            <ul id="tipsList"></ul>
+          </div>
+          <p class="disclaimer">Hinweis: Proportio liefert eine geometrische Auswertung auf Basis eines 2D-Fotos. Kamerawinkel, Brennweite, Licht und Mimik beeinflussen die Werte. Attraktivität ist subjektiv und lässt sich nicht auf Zahlen reduzieren – nutze die Ergebnisse als Orientierung, nicht als Urteil.</p>
+        </div>
+
+        <div id="history" class="card history" hidden>
+          <div class="history-head"><h3>Dein Verlauf</h3><button class="link-btn" id="clearHistory">Löschen</button></div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRICS EXPLAINED -->
+    <section id="metrics" class="section alt">
+      <div class="container">
+        <h2 class="section-title">Welche Metriken wir messen</h2>
+        <div class="grid-3" id="metricInfo"></div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <div class="container narrow">
+        <h2 class="section-title">Häufige Fragen</h2>
+        <details class="faq"><summary>Wird mein Foto hochgeladen?</summary><p>Nein. Das KI-Modell wird einmalig in deinen Browser geladen; die komplette Analyse läuft lokal auf deinem Gerät. Gespeicherte Verläufe liegen nur im lokalen Speicher deines Browsers.</p></details>
+        <details class="faq"><summary>Wie genau ist die Analyse?</summary><p>Die Landmarkenerkennung ist sehr präzise, aber ein Foto ist eine 2D-Projektion. Weitwinkel-Selfies verzerren z. B. Nase und Gesichtsbreite. Für die besten Ergebnisse: Kamera auf Augenhöhe, ca. 1–1,5 m Abstand, leicht gezoomt.</p></details>
+        <details class="faq"><summary>Woher kommen die Idealwerte?</summary><p>Aus der anthropometrischen und ästhetischen Literatur (u. a. neoklassische Kanons, Studien zu FWHR, Canthal Tilt und Mittelgesichtsproportionen). Sie beschreiben statistische Tendenzen – keine Regeln.</p></details>
+        <details class="faq"><summary>Warum unterscheiden sich Werte zwischen Fotos?</summary><p>Kopfneigung, Mimik, Linsenverzerrung und Licht verändern die gemessenen Abstände. Vergleiche am besten Fotos, die unter gleichen Bedingungen entstanden sind.</p></details>
+        <details class="faq"><summary>Kann ich meine Werte verbessern?</summary><p>Manche Werte sind knöchern festgelegt, andere werden durch Körperfettanteil, Grooming (Augenbrauen, Bart), Frisur, Haltung und Hautpflege sichtbar beeinflusst. Die Tipps zeigen dir, wo der größte Hebel liegt.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="logo small"><span class="logo-dot"></span>Proportio</span>
+      <span class="muted small">© <span id="year"></span> Proportio · Analyse lokal im Browser · Kein medizinischer Rat</span>
+    </div>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
