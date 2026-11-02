@@ -5,11 +5,15 @@ Eigenständige Web-App zur geometrischen Analyse von Gesichtsproportionen (inspi
 ## Funktionen
 - Foto-Upload (Button oder Drag & Drop) oder Aufnahme per Webcam
 - Erkennung von 478 Gesichtspunkten (inkl. Iris) mit MediaPipe Face Landmarker – **komplett im Browser**, kein Server-Upload
-- Automatische Korrektur der Kopfneigung, Warnung bei seitlich gedrehtem Kopf
-- 13 Metriken mit Idealbereichen (männlich/weiblich) und Score 0–10:
-  Symmetrie, Gesichtsdrittel, FWHR, Canthal Tilt, Augenabstand (ESR), Augen-Fünftel, Augenöffnung,
-  Mittelgesichts-Ratio, Nasenbreite, Mund-/Nasenbreite, Lippenverhältnis, Kinn/Philtrum, Kieferbreite
-- Gesamtscore, Kategorie-Scores, Overlay (Mesh + Hilfslinien) auf dem Foto
+- Gesicht wird automatisch erkannt, aufrecht gedreht (auch bei 90°/180° gedrehten Fotos) und zugeschnitten
+- Sichtbare Messpunkte, die sich per Drag & Drop korrigieren lassen – alle Werte rechnen live neu
+- Fahre über einen Wert (oder tippe ihn an): die zugehörige Messung (Linien, Winkel, Abstände) erscheint im Bild
+- **Frontal** – 13 Metriken: Symmetrie, Gesichtsdrittel, FWHR, Canthal Tilt, Augenabstand (ESR), Augen-Fünftel,
+  Augenöffnung, Mittelgesichts-Ratio, Nasenbreite, Mund-/Nasenbreite, Lippenverhältnis, Kinn/Philtrum, Kieferbreite
+- **Seitenprofil** – 10 Metriken: nasofrontaler, nasolabialer, nasofazialer und nasomentaler Winkel, Mentolabialwinkel,
+  Ricketts-E-Linie (Ober-/Unterlippe), Profilkonvexität, Gonialwinkel, Lippe-zu-Kinn. Punkte werden automatisch
+  gesetzt, wenn die KI das Profil erkennt – sonst klickt man sie geführt nacheinander an.
+- Idealbereiche für männlich/weiblich, Score 0–10, Gesamtscore und Kategorie-Scores
 - Personalisierte Verbesserungstipps
 - Lokaler Verlauf (localStorage) und Export der Auswertung als PNG
 

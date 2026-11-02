@@ -39,7 +39,7 @@
           </div>
           <ul class="hero-stats">
             <li><strong>478</strong><span>Gesichtspunkte</span></li>
-            <li><strong>13</strong><span>Metriken</span></li>
+            <li><strong>23</strong><span>Metriken</span></li>
             <li><strong>0</strong><span>Uploads auf Server</span></li>
           </ul>
         </div>
@@ -75,11 +75,11 @@
       <div class="container">
         <h2 class="section-title">Alles, was du über dein Gesicht wissen willst</h2>
         <div class="grid-3">
-          <article class="card feature"><div class="ico">◎</div><h3>Präzise Landmarken</h3><p>Ein neuronales Netz erkennt 478 Punkte in deinem Gesicht – inklusive Iris – als Grundlage für alle Messungen.</p></article>
+          <article class="card feature"><div class="ico">◎</div><h3>Sichtbare Messpunkte</h3><p>Ein neuronales Netz setzt 478 Punkte – die wichtigsten werden markiert. Fahre über einen Wert und sieh die Messung direkt im Bild.</p></article>
           <article class="card feature"><div class="ico">⚖</div><h3>Wissenschaftliche Ideale</h3><p>Jede Metrik wird mit Idealbereichen aus Anthropometrie und Ästhetik-Forschung verglichen und von 0–10 bewertet.</p></article>
           <article class="card feature"><div class="ico">✦</div><h3>Konkrete Tipps</h3><p>Zu jeder Metrik bekommst du eine verständliche Erklärung und Ansatzpunkte – von Frisur über Grooming bis Haltung.</p></article>
           <article class="card feature"><div class="ico">🔒</div><h3>Privat by Design</h3><p>Die Analyse läuft komplett lokal in deinem Browser. Dein Foto verlässt niemals dein Gerät.</p></article>
-          <article class="card feature"><div class="ico">📷</div><h3>Foto oder Kamera</h3><p>Lade ein Bild hoch oder nimm direkt mit der Webcam auf – mit Hinweisen für die optimale Aufnahme.</p></article>
+          <article class="card feature"><div class="ico">◐</div><h3>Frontal &amp; Profil</h3><p>Neben der Frontalanalyse misst das Seitenprofil Nasen-, Lippen-, Kinn- und Kieferwinkel inklusive Ricketts-E-Linie.</p></article>
           <article class="card feature"><div class="ico">📈</div><h3>Verlauf & Export</h3><p>Speichere Ergebnisse lokal, vergleiche deinen Fortschritt und exportiere deine Auswertung als Bild.</p></article>
         </div>
       </div>
@@ -91,8 +91,8 @@
         <h2 class="section-title">In drei Schritten zur Auswertung</h2>
         <ol class="steps">
           <li class="card"><span class="step-n">1</span><h3>Foto aufnehmen</h3><p>Frontal, neutraler Ausdruck, gerade Kopfhaltung, gleichmäßiges Licht, Haare aus dem Gesicht.</p></li>
-          <li class="card"><span class="step-n">2</span><h3>KI analysiert</h3><p>Landmarken werden erkannt, die Kopfneigung korrigiert und 13 Proportionen berechnet.</p></li>
-          <li class="card"><span class="step-n">3</span><h3>Ergebnis verstehen</h3><p>Gesamtscore, Einzelwerte mit Idealbereich, Overlay auf deinem Foto und Verbesserungstipps.</p></li>
+          <li class="card"><span class="step-n">2</span><h3>KI analysiert</h3><p>Landmarken werden gesetzt, das Gesicht automatisch gedreht und zugeschnitten und bis zu 23 Proportionen berechnet – frontal und im Profil.</p></li>
+          <li class="card"><span class="step-n">3</span><h3>Ergebnis verstehen</h3><p>Fahre über einen Wert und sieh genau, was im Bild gemessen wurde. Punkte lassen sich per Drag &amp; Drop korrigieren.</p></li>
         </ol>
       </div>
     </section>
@@ -103,7 +103,11 @@
         <h2 class="section-title">Gesichtsanalyse starten</h2>
         <div class="analyzer card">
           <div class="analyzer-controls">
-            <div class="seg" role="radiogroup" aria-label="Geschlecht für Idealwerte">
+            <div class="seg" id="modeSeg" role="radiogroup" aria-label="Ansicht">
+              <button class="seg-btn active" data-mode="front" role="radio" aria-checked="true">Frontal</button>
+              <button class="seg-btn" data-mode="side" role="radio" aria-checked="false">Seitenprofil</button>
+            </div>
+            <div class="seg" id="sexSeg" role="radiogroup" aria-label="Geschlecht für Idealwerte">
               <button class="seg-btn active" data-sex="m" role="radio" aria-checked="true">Männlich</button>
               <button class="seg-btn" data-sex="f" role="radio" aria-checked="false">Weiblich</button>
             </div>
@@ -115,68 +119,72 @@
               <button id="camBtn" class="btn btn-ghost">Kamera nutzen</button>
             </div>
           </div>
+          <p class="mode-hint muted small" id="modeHint"></p>
 
           <div id="dropZone" class="dropzone">
             <div class="dz-empty" id="dzEmpty">
               <div class="dz-icon">⬆</div>
               <p><strong>Bild hierher ziehen</strong> oder oben „Foto hochladen“ wählen</p>
-              <p class="muted small">JPG, PNG oder WebP · Frontalaufnahme · ein Gesicht</p>
+              <p class="muted small" id="dzSub">JPG, PNG oder WebP · Frontalaufnahme · ein Gesicht</p>
             </div>
-            <div class="stage" id="stage" hidden>
-              <canvas id="canvas"></canvas>
-              <video id="video" playsinline muted hidden></video>
-              <div class="stage-overlay" id="loader" hidden><div class="spinner"></div><p id="loaderText">KI-Modell wird geladen…</p></div>
-            </div>
+            <video id="video" playsinline muted hidden></video>
           </div>
-
           <div class="cam-bar" id="camBar" hidden>
             <button id="snapBtn" class="btn btn-primary">Foto aufnehmen</button>
             <button id="camStop" class="btn btn-ghost">Abbrechen</button>
           </div>
-
-          <div class="overlay-toggles" id="toggles" hidden>
-            <label><input type="checkbox" id="tglMesh" checked /> Landmarken</label>
-            <label><input type="checkbox" id="tglLines" checked /> Hilfslinien</label>
-          </div>
-
           <p class="error" id="errorMsg" hidden></p>
         </div>
 
-        <!-- RESULTS -->
-        <div id="results" class="results" hidden>
-          <div class="results-head card">
-            <div class="ring-wrap">
-              <svg viewBox="0 0 120 120" class="ring">
-                <circle cx="60" cy="60" r="52" class="ring-bg"/>
-                <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
-              </svg>
-              <div class="ring-label"><strong id="overallScore">–</strong><span>/ 10</span></div>
-            </div>
-            <div class="results-summary">
-              <h3 id="tierLabel">–</h3>
-              <p id="summaryText" class="muted"></p>
-              <div class="sub-scores" id="subScores"></div>
-              <div class="results-actions">
-                <button class="btn btn-primary btn-sm" id="saveBtn">Im Verlauf speichern</button>
-                <button class="btn btn-ghost btn-sm" id="exportBtn">Als Bild exportieren</button>
+        <!-- WORKSPACE -->
+        <div id="workspace" class="workspace" hidden>
+          <div class="viewer-col">
+            <div class="viewer card">
+              <div class="place-bar" id="placeBar" hidden>
+                <div class="place-text"><span class="place-step" id="placeStep">1/12</span><div><strong id="placeTitle"></strong><span id="placeHint"></span></div></div>
+                <button class="btn btn-ghost btn-sm" id="placeBack">Zurück</button>
+              </div>
+              <div class="canvas-wrap">
+                <canvas id="canvas" width="900" height="1125"></canvas>
+                <div class="stage-overlay" id="loader" hidden><div class="spinner"></div><p id="loaderText">KI-Modell wird geladen…</p></div>
+              </div>
+              <div class="viewer-caption" id="caption"></div>
+              <div class="viewer-tools">
+                <label><input type="checkbox" id="tglAlign" checked /> Auto-Ausrichtung</label>
+                <label id="meshLabel"><input type="checkbox" id="tglMesh" checked /> Gesichtsnetz</label>
+                <label><input type="checkbox" id="tglPts" checked /> Punkte</label>
+                <button class="link-btn" id="replaceBtn">Punkte neu setzen</button>
               </div>
             </div>
           </div>
 
-          <div class="tabs" role="tablist">
-            <button class="tab active" data-filter="all">Alle</button>
-            <button class="tab" data-filter="harmony">Harmonie</button>
-            <button class="tab" data-filter="eyes">Augen</button>
-            <button class="tab" data-filter="midface">Mittelgesicht</button>
-            <button class="tab" data-filter="lower">Untergesicht</button>
+          <div class="results-col" id="results" hidden>
+            <div class="results-head card">
+              <div class="ring-wrap">
+                <svg viewBox="0 0 120 120" class="ring">
+                  <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                  <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
+                </svg>
+                <div class="ring-label"><strong id="overallScore">–</strong><span>/ 10</span></div>
+              </div>
+              <div class="results-summary">
+                <h3 id="tierLabel">–</h3>
+                <p id="summaryText" class="muted"></p>
+                <div class="sub-scores" id="subScores"></div>
+                <div class="results-actions">
+                  <button class="btn btn-primary btn-sm" id="saveBtn">Im Verlauf speichern</button>
+                  <button class="btn btn-ghost btn-sm" id="exportBtn">Als Bild exportieren</button>
+                </div>
+              </div>
+            </div>
+            <div class="tabs" role="tablist" id="tabs"></div>
+            <div class="metrics-grid" id="metricsGrid"></div>
+            <div class="card tips" id="tipsCard">
+              <h3>Deine Top-Ansatzpunkte</h3>
+              <ul id="tipsList"></ul>
+            </div>
+            <p class="disclaimer">Hinweis: Proportio liefert eine geometrische Auswertung auf Basis eines 2D-Fotos. Kamerawinkel, Brennweite, Licht und Mimik beeinflussen die Werte. Attraktivität ist subjektiv und lässt sich nicht auf Zahlen reduzieren – nutze die Ergebnisse als Orientierung, nicht als Urteil.</p>
           </div>
-          <div class="metrics-grid" id="metricsGrid"></div>
-
-          <div class="card tips" id="tipsCard">
-            <h3>Deine Top-Ansatzpunkte</h3>
-            <ul id="tipsList"></ul>
-          </div>
-          <p class="disclaimer">Hinweis: Proportio liefert eine geometrische Auswertung auf Basis eines 2D-Fotos. Kamerawinkel, Brennweite, Licht und Mimik beeinflussen die Werte. Attraktivität ist subjektiv und lässt sich nicht auf Zahlen reduzieren – nutze die Ergebnisse als Orientierung, nicht als Urteil.</p>
         </div>
 
         <div id="history" class="card history" hidden>
@@ -190,7 +198,10 @@
     <section id="metrics" class="section alt">
       <div class="container">
         <h2 class="section-title">Welche Metriken wir messen</h2>
+        <h3 class="info-group">Frontal</h3>
         <div class="grid-3" id="metricInfo"></div>
+        <h3 class="info-group">Seitenprofil</h3>
+        <div class="grid-3" id="metricInfoSide"></div>
       </div>
     </section>
 
