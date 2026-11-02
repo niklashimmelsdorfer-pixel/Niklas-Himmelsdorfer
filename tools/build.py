@@ -18,7 +18,7 @@ def inline(html, config=""):
 if "--artifact" in sys.argv:
     out = pathlib.Path(sys.argv[sys.argv.index("--artifact") + 1])
     out.mkdir(parents=True, exist_ok=True)
-    page = inline(html, '{ wasmBinaryUrl: "vision_wasm_internal.wasm", modelUrl: "face_landmarker.bin", noCamera: true }')
+    page = inline(html, '{ wasmBinaryUrl: "vision_wasm_internal.wasm", modelUrl: "face_landmarker_model.wasm", noCamera: true }')
     head = re.search(r"<head>(.*?)</head>", page, re.S).group(1)
     body = re.search(r"<body>(.*)</body>", page, re.S).group(1)
     head = re.sub(r'\s*<meta charset[^>]*>\s*<meta name="viewport"[^>]*>', "", head)
