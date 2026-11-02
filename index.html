@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proportio Gesichtsanalyse</title>
+  <meta name="description" content="Analysiere deine Gesichtsproportionen mit KI: Symmetrie, Gesichtsdrittel, Canthal Tilt, FWHR und mehr – direkt im Browser, ohne Upload." />
+  <link rel="preload" href="assets/fonts/sora.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/fonts.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ff8a3d'/%3E%3Cpath d='M10 13h4M18 13h4M12 21q4 3 8 0' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="logo" href="#top"><span class="logo-dot"></span>Proportio</a>
+      <nav class="nav-links">
+        <a href="#features">Funktionen</a>
+        <a href="#metrics">Metriken</a>
+        <a href="#pricing">Preise</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn btn-ghost btn-sm" id="accountBtn" type="button">Anmelden</button>
+        <a class="btn btn-primary btn-sm" href="#analyze">Jetzt analysieren</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="pill">Kostenlos testen · Pro ab 4,17 € im Monat</span>
+          <h1>Verstehe dein Gesicht – <span class="grad">Zahl für Zahl.</span></h1>
+          <p class="lead">Lade ein Foto von vorn oder von der Seite hoch. Die KI setzt die Messpunkte, richtet dein Gesicht aus und misst 35 Werte – von Symmetrie und Canthal Tilt bis Kieferwinkel und E-Linie. Jede Messung siehst du direkt im Bild.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#analyze">Kostenlos testen</a>
+            <a class="btn btn-ghost" href="#pricing">Preise ansehen</a>
+          </div>
+          <ul class="hero-stats">
+            <li><strong>478</strong><span>Gesichtspunkte</span></li>
+            <li><strong>35</strong><span>Messwerte</span></li>
+            <li><strong>0</strong><span>Uploads auf Server</span></li>
+          </ul>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <svg viewBox="0 0 300 360" class="face-svg">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#2dd4bf"/>
+              </linearGradient>
+            </defs>
+            <path d="M150 20 C 70 20 50 90 52 160 C 54 230 90 300 150 335 C 210 300 246 230 248 160 C 250 90 230 20 150 20 Z" fill="none" stroke="url(#g1)" stroke-width="2.5"/>
+            <line x1="40" y1="118" x2="260" y2="118" class="guide"/>
+            <line x1="40" y1="215" x2="260" y2="215" class="guide"/>
+            <line x1="150" y1="10" x2="150" y2="350" class="guide"/>
+            <path d="M92 150 q 22 -14 44 -4" class="feat"/><path d="M164 146 q 22 -10 44 4" class="feat"/>
+            <circle cx="114" cy="152" r="5" class="dot"/><circle cx="186" cy="152" r="5" class="dot"/>
+            <path d="M150 160 L 140 208 Q 150 216 160 208" class="feat"/>
+            <path d="M118 250 Q 150 268 182 250" class="feat"/>
+            <g class="pts">
+              <circle cx="52" cy="160" r="3"/><circle cx="248" cy="160" r="3"/><circle cx="150" cy="335" r="3"/>
+              <circle cx="80" cy="260" r="3"/><circle cx="220" cy="260" r="3"/><circle cx="92" cy="150" r="3"/><circle cx="208" cy="150" r="3"/>
+            </g>
+          </svg>
+          <div class="score-chip"><span>Score</span><strong>7,8</strong></div>
+          <div class="tag-chip t1">Canthal Tilt +5,2°</div>
+          <div class="tag-chip t2">Symmetrie 94 %</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section">
+      <div class="container">
+        <h2 class="section-title">Alles, was du über dein Gesicht wissen willst</h2>
+        <div class="grid-3">
+          <article class="card feature"><div class="ico">◎</div><h3>Sichtbare Messpunkte</h3><p>Ein neuronales Netz setzt 478 Punkte – die wichtigsten werden markiert. Fahre über einen Wert und sieh die Messung direkt im Bild.</p></article>
+          <article class="card feature"><div class="ico">⚖</div><h3>Wissenschaftliche Ideale</h3><p>Jede Metrik wird mit Idealbereichen aus Anthropometrie und Ästhetik-Forschung verglichen und von 0–10 bewertet.</p></article>
+          <article class="card feature"><div class="ico">✦</div><h3>Konkrete Tipps</h3><p>Zu jeder Metrik bekommst du eine verständliche Erklärung und Ansatzpunkte – von Frisur über Grooming bis Haltung.</p></article>
+          <article class="card feature"><div class="ico">🔒</div><h3>Privat by Design</h3><p>Die Analyse läuft komplett lokal in deinem Browser. Dein Foto verlässt niemals dein Gerät.</p></article>
+          <article class="card feature"><div class="ico">◐</div><h3>Frontal &amp; Profil</h3><p>Neben der Frontalanalyse misst das Seitenprofil Nasen-, Lippen-, Kinn- und Kieferwinkel inklusive Ricketts-E-Linie.</p></article>
+          <article class="card feature"><div class="ico">📈</div><h3>Verlauf & Export</h3><p>Speichere Ergebnisse lokal, vergleiche deinen Fortschritt und exportiere deine Auswertung als Bild.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section id="how" class="section alt">
+      <div class="container">
+        <h2 class="section-title">In drei Schritten zur Auswertung</h2>
+        <ol class="steps">
+          <li class="card"><span class="step-n">1</span><h3>Foto aufnehmen</h3><p>Frontal, neutraler Ausdruck, gerade Kopfhaltung, gleichmäßiges Licht, Haare aus dem Gesicht.</p></li>
+          <li class="card"><span class="step-n">2</span><h3>KI analysiert</h3><p>Landmarken werden gesetzt, das Gesicht automatisch gedreht und zugeschnitten und bis zu 35 Messwerte berechnet – frontal und im Profil.</p></li>
+          <li class="card"><span class="step-n">3</span><h3>Ergebnis verstehen</h3><p>Fahre über einen Wert und sieh genau, was im Bild gemessen wurde. Punkte lassen sich per Drag &amp; Drop korrigieren.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ANALYZER -->
+    <section id="analyze" class="section">
+      <div class="container">
+        <h2 class="section-title">Gesichtsanalyse starten</h2>
+        <div class="analyzer card">
+          <div class="analyzer-controls">
+            <div class="seg" id="modeSeg" role="radiogroup" aria-label="Ansicht">
+              <button class="seg-btn active" data-mode="front" role="radio" aria-checked="true">Frontal</button>
+              <button class="seg-btn" data-mode="side" role="radio" aria-checked="false">Seitenprofil</button>
+            </div>
+            <div class="seg" id="sexSeg" role="radiogroup" aria-label="Geschlecht für Idealwerte">
+              <button class="seg-btn active" data-sex="m" role="radio" aria-checked="true">Männlich</button>
+              <button class="seg-btn" data-sex="f" role="radio" aria-checked="false">Weiblich</button>
+            </div>
+            <div class="analyzer-actions">
+              <label class="btn btn-primary">
+                Foto hochladen
+                <input id="fileInput" type="file" accept="image/*" hidden />
+              </label>
+              <button id="camBtn" class="btn btn-ghost">Kamera nutzen</button>
+            </div>
+          </div>
+          <p class="mode-hint muted small" id="modeHint"></p>
+
+          <div id="dropZone" class="dropzone">
+            <div class="dz-empty" id="dzEmpty">
+              <div class="dz-icon">⬆</div>
+              <p><strong>Bild hierher ziehen</strong> oder oben „Foto hochladen“ wählen</p>
+              <p class="muted small" id="dzSub">JPG, PNG oder WebP · Frontalaufnahme · ein Gesicht</p>
+              <div class="sample-row" id="sampleRow"><button class="btn btn-ghost btn-sm" id="sampleBtn" type="button">Mit Beispielfoto ausprobieren</button><span class="muted small">Foto: NASA, gemeinfrei</span></div>
+            </div>
+            <video id="video" playsinline muted hidden></video>
+          </div>
+          <div class="cam-bar" id="camBar" hidden>
+            <button id="snapBtn" class="btn btn-primary">Foto aufnehmen</button>
+            <button id="camStop" class="btn btn-ghost">Abbrechen</button>
+          </div>
+          <p class="error" id="errorMsg" hidden></p>
+        </div>
+
+        <!-- WORKSPACE -->
+        <div id="workspace" class="workspace" hidden>
+          <div class="viewer-col">
+            <div class="viewer card">
+              <div class="place-bar" id="placeBar" hidden>
+                <div class="place-text"><span class="place-step" id="placeStep">1/12</span><div><strong id="placeTitle"></strong><span id="placeHint"></span></div></div>
+                <button class="btn btn-ghost btn-sm" id="placeBack">Zurück</button>
+              </div>
+              <div class="canvas-wrap">
+                <canvas id="canvas" width="900" height="1125"></canvas>
+                <div class="stage-overlay" id="loader" hidden><div class="spinner"></div><p id="loaderText">KI-Modell wird geladen…</p></div>
+              </div>
+              <div class="viewer-caption" id="caption"></div>
+              <div class="viewer-tools">
+                <label><input type="checkbox" id="tglAlign" checked /> Auto-Ausrichtung</label>
+                <label><input type="checkbox" id="tglZoom" checked /> Auto-Zoom</label>
+                <label id="meshLabel"><input type="checkbox" id="tglMesh" checked /> Gesichtsnetz</label>
+                <label><input type="checkbox" id="tglPts" checked /> Punkte</label>
+                <button class="link-btn" id="replaceBtn">Punkte neu setzen</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="results-col" id="results" hidden>
+            <div class="results-head card">
+              <div class="ring-wrap">
+                <svg viewBox="0 0 120 120" class="ring">
+                  <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                  <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"/>
+                </svg>
+                <div class="ring-label"><strong id="overallScore">–</strong><span>/ 10</span></div>
+              </div>
+              <div class="results-summary">
+                <h3 id="tierLabel">–</h3>
+                <p id="summaryText" class="muted"></p>
+                <div class="shape-chip" id="shapeChip"></div>
+                <div class="sub-scores" id="subScores"></div>
+                <div class="results-actions">
+                  <button class="btn btn-primary btn-sm" id="saveBtn">Im Verlauf speichern</button>
+                  <button class="btn btn-ghost btn-sm" id="exportBtn">Als Bild exportieren</button>
+                </div>
+              </div>
+            </div>
+            <div class="tabs" role="tablist" id="tabs"></div>
+            <div class="metrics-grid" id="metricsGrid"></div>
+            <div class="insights" id="insights">
+              <div class="card insight"><h3><span class="dot good"></span>Deine Stärken</h3><ul id="strengthList"></ul></div>
+              <div class="card insight"><h3><span class="dot warn"></span>Dein Potenzial</h3><ul id="tipsList"></ul></div>
+            </div>
+            <p class="disclaimer">Hinweis: Proportio liefert eine geometrische Auswertung auf Basis eines 2D-Fotos. Kamerawinkel, Brennweite, Licht und Mimik beeinflussen die Werte. Attraktivität ist subjektiv und lässt sich nicht auf Zahlen reduzieren – nutze die Ergebnisse als Orientierung, nicht als Urteil.</p>
+          </div>
+        </div>
+
+        <div id="history" class="card history" hidden>
+          <div class="history-head"><h3>Dein Verlauf</h3><button class="link-btn" id="clearHistory">Löschen</button></div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRICS EXPLAINED -->
+    <section id="metrics" class="section alt">
+      <div class="container">
+        <h2 class="section-title">Welche Metriken wir messen</h2>
+        <h3 class="info-group">Frontal</h3>
+        <div class="grid-3" id="metricInfo"></div>
+        <h3 class="info-group">Seitenprofil</h3>
+        <div class="grid-3" id="metricInfoSide"></div>
+      </div>
+    </section>
+
+    <!-- PREISE -->
+    <section id="pricing" class="section">
+      <div class="container">
+        <h2 class="section-title">Ein Preis. Alle Messwerte.</h2>
+        <p class="section-sub muted">Teste kostenlos mit Gesamtscore und Basiswerten. Mit Pro schaltest du alle 35 Messwerte, das Seitenprofil und alle Werkzeuge frei.</p>
+        <div class="billing-toggle seg" role="radiogroup" aria-label="Abrechnung">
+          <button class="seg-btn" data-billing="monthly" role="radio" aria-checked="false">Monatlich</button>
+          <button class="seg-btn active" data-billing="yearly" role="radio" aria-checked="true">Jährlich <span class="save-tag">2 Monate gratis</span></button>
+        </div>
+        <div class="plans">
+          <article class="card plan">
+            <h3>Kostenlos</h3>
+            <p class="plan-price"><strong>0 €</strong></p>
+            <p class="plan-note muted">Zum Ausprobieren</p>
+            <ul class="plan-list">
+              <li>Gesamtscore &amp; Gesichtsform</li>
+              <li>10 Basiswerte (5 frontal, 5 Profil) mit Messung im Bild</li>
+              <li>Automatische Ausrichtung &amp; Messpunkte</li>
+              <li class="off">25 weitere Pro-Messwerte</li>
+              <li class="off">Stärken, Potenzial &amp; Tipps</li>
+              <li class="off">Export &amp; Verlauf</li>
+            </ul>
+            <a class="btn btn-ghost plan-cta" href="#analyze">Kostenlos testen</a>
+          </article>
+          <article class="card plan plan-pro">
+            <span class="plan-badge">Empfohlen</span>
+            <h3>Proportio Pro</h3>
+            <p class="plan-price"><strong data-price></strong><span data-period></span></p>
+            <p class="plan-note" data-price-note></p>
+            <ul class="plan-list">
+              <li>Alle 35 Messwerte – frontal &amp; Profil</li>
+              <li>Jede Messung im Bild mit Auto-Zoom</li>
+              <li>Stärken, Potenzial &amp; persönliche Tipps</li>
+              <li>Gesichtsform &amp; Profiltyp mit Empfehlungen</li>
+              <li>Export als Bild &amp; Verlauf zum Vergleichen</li>
+              <li>Analyse bleibt 100 % auf deinem Gerät</li>
+            </ul>
+            <button class="btn btn-primary plan-cta" type="button" data-open-paywall>Pro freischalten</button>
+            <p class="plan-fine muted">Preise inkl. MwSt. · jederzeit zum Ende der Laufzeit kündbar</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <div class="container narrow">
+        <h2 class="section-title">Häufige Fragen</h2>
+        <details class="faq"><summary>Wird mein Foto hochgeladen?</summary><p>Nein. Das KI-Modell wird einmalig in deinen Browser geladen; die komplette Analyse läuft lokal auf deinem Gerät. Gespeicherte Verläufe liegen nur im lokalen Speicher deines Browsers.</p></details>
+        <details class="faq"><summary>Wie genau ist die Analyse?</summary><p>Die Landmarkenerkennung ist sehr präzise, aber ein Foto ist eine 2D-Projektion. Weitwinkel-Selfies verzerren z. B. Nase und Gesichtsbreite. Für die besten Ergebnisse: Kamera auf Augenhöhe, ca. 1–1,5 m Abstand, leicht gezoomt.</p></details>
+        <details class="faq"><summary>Woher kommen die Idealwerte?</summary><p>Aus der anthropometrischen und ästhetischen Literatur (u. a. neoklassische Kanons, Studien zu FWHR, Canthal Tilt und Mittelgesichtsproportionen). Sie beschreiben statistische Tendenzen – keine Regeln.</p></details>
+        <details class="faq"><summary>Warum unterscheiden sich Werte zwischen Fotos?</summary><p>Kopfneigung, Mimik, Linsenverzerrung und Licht verändern die gemessenen Abstände. Vergleiche am besten Fotos, die unter gleichen Bedingungen entstanden sind.</p></details>
+        <details class="faq"><summary>Was ist kostenlos, was kostet Pro?</summary><p>Kostenlos siehst du deinen Gesamtscore, deine Gesichtsform bzw. deinen Profiltyp und je 5 Basiswerte frontal und im Profil. Pro kostet 5 € im Monat oder 50 € im Jahr und schaltet alle 35 Messwerte, Stärken &amp; Potenzial, Tipps, Export und Verlauf frei.</p></details>
+        <details class="faq"><summary>Wie kündige ich mein Abo?</summary><p>Jederzeit mit wenigen Klicks über „Verträge hier kündigen“ im Fußbereich oder in deinem Konto. Das Abo läuft bis zum Ende der bezahlten Laufzeit weiter und verlängert sich dann nicht mehr.</p></details>
+        <details class="faq"><summary>Wie nutze ich Pro auf mehreren Geräten?</summary><p>Nach dem Kauf erhältst du einen Zugangsschlüssel per E-Mail. Gib ihn auf jedem Gerät unter „Anmelden“ ein.</p></details>
+        <details class="faq"><summary>Kann ich meine Werte verbessern?</summary><p>Manche Werte sind knöchern festgelegt, andere werden durch Körperfettanteil, Grooming (Augenbrauen, Bart), Frisur, Haltung und Hautpflege sichtbar beeinflusst. Die Tipps zeigen dir, wo der größte Hebel liegt.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="logo small"><span class="logo-dot"></span>Proportio</span>
+      <span class="muted small">© <span id="year"></span> Proportio · Analyse lokal im Browser · Kein medizinischer Rat</span>
+      <nav class="footer-links">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="agb.html">AGB</a>
+        <a href="widerruf.html">Widerruf</a>
+        <button class="link-btn" type="button" id="cancelLink">Verträge hier kündigen</button>
+        <button class="link-btn" type="button" id="withdrawLink">Vertrag widerrufen</button>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="modal" id="exportModal" hidden>
+    <div class="modal-box card">
+      <img id="exportImg" alt="Exportierte Auswertung" />
+      <p class="muted small">Falls der Download nicht startet: Bild gedrückt halten bzw. Rechtsklick → „Bild speichern“.</p>
+      <div class="results-actions"><a class="btn btn-primary btn-sm" id="exportLink" href="#">PNG herunterladen</a><button class="btn btn-ghost btn-sm" id="exportClose">Schließen</button></div>
+    </div>
+  </div>
+
+  <!-- PAYWALL -->
+  <div class="modal" id="paywall" hidden>
+    <div class="modal-box card pay-box" role="dialog" aria-modal="true" aria-labelledby="pwTitle">
+      <button class="modal-x" type="button" data-close aria-label="Schließen">×</button>
+      <div class="test-banner" data-demo-only>Testmodus – es wird kein Geld abgebucht</div>
+      <h3 id="pwTitle">Proportio Pro freischalten</h3>
+      <p class="muted" id="pwReason">Alle 35 Messwerte, jede Messung im Bild und deine persönlichen Tipps.</p>
+      <div class="pw-plans">
+        <label class="pw-plan"><input type="radio" name="pwPlan" value="yearly" checked /><span><strong>Jährlich</strong><em data-price-y></em><small>entspricht <span data-price-ym></span> im Monat · 2 Monate gratis</small></span></label>
+        <label class="pw-plan"><input type="radio" name="pwPlan" value="monthly" /><span><strong>Monatlich</strong><em data-price-m></em><small>monatlich kündbar</small></span></label>
+      </div>
+      <form id="checkoutForm" class="checkout" novalidate>
+        <div data-demo-only class="checkout-demo">
+          <label>E-Mail<input id="coEmail" type="email" autocomplete="email" placeholder="du@beispiel.de" required /></label>
+          <label>Kartennummer (Test)<input id="coCard" value="4242 4242 4242 4242" inputmode="numeric" readonly /></label>
+          <div class="co-row"><label>Gültig bis<input value="12/34" readonly /></label><label>CVC<input value="123" readonly /></label></div>
+        </div>
+        <label class="consent"><input type="checkbox" id="coConsent" /> <span>Ich möchte, dass der Zugang sofort freigeschaltet wird, und weiß, dass mein Widerrufsrecht damit vorzeitig erlischt.</span></label>
+        <p class="co-legal muted small">Mit dem Abschluss akzeptierst du die <a href="agb.html" target="_blank">AGB</a>. Hinweise zum <a href="widerruf.html" target="_blank">Widerrufsrecht</a> und zum <a href="datenschutz.html" target="_blank">Datenschutz</a>. Das Abo verlängert sich automatisch und ist jederzeit zum Ende der Laufzeit kündbar.</p>
+        <p class="error" id="coError" hidden></p>
+        <button class="btn btn-primary co-submit" id="coSubmit" type="submit">Zahlungspflichtig abonnieren</button>
+      </form>
+      <button class="link-btn pw-restore" type="button" data-open-license>Schon gekauft? Zugangsschlüssel eingeben</button>
+    </div>
+  </div>
+
+  <!-- KAUF ERFOLGREICH -->
+  <div class="modal" id="successModal" hidden>
+    <div class="modal-box card pay-box center" role="dialog" aria-modal="true">
+      <div class="success-icon">✓</div>
+      <h3>Willkommen bei Proportio Pro</h3>
+      <p class="muted">Alle Messwerte sind freigeschaltet. Deinen Zugangsschlüssel bekommst du zusätzlich per E-Mail – damit nutzt du Pro auch auf anderen Geräten.</p>
+      <p class="key-box" id="successKey"></p>
+      <button class="btn btn-primary" type="button" data-close>Zur Analyse</button>
+    </div>
+  </div>
+
+  <!-- ZUGANGSSCHLÜSSEL -->
+  <div class="modal" id="licenseModal" hidden>
+    <div class="modal-box card pay-box" role="dialog" aria-modal="true">
+      <button class="modal-x" type="button" data-close aria-label="Schließen">×</button>
+      <h3>Anmelden mit Zugangsschlüssel</h3>
+      <p class="muted">Den Schlüssel findest du in der Bestätigungs-E-Mail nach deinem Kauf.</p>
+      <form id="licenseForm" class="checkout">
+        <label>Zugangsschlüssel<input id="licenseInput" autocomplete="off" spellcheck="false" placeholder="XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" /></label>
+        <p class="error" id="licenseError" hidden></p>
+        <button class="btn btn-primary" id="licenseSubmit" type="submit">Freischalten</button>
+      </form>
+      <button class="link-btn" type="button" data-open-paywall>Noch kein Pro? Jetzt abonnieren</button>
+    </div>
+  </div>
+
+  <!-- KONTO -->
+  <div class="modal" id="accountModal" hidden>
+    <div class="modal-box card pay-box" role="dialog" aria-modal="true">
+      <button class="modal-x" type="button" data-close aria-label="Schließen">×</button>
+      <h3>Dein Konto</h3>
+      <dl class="acct" id="acctInfo"></dl>
+      <div class="acct-actions">
+        <button class="btn btn-ghost btn-sm" type="button" id="manageBtn">Abo verwalten oder kündigen</button>
+        <button class="link-btn" type="button" id="logoutBtn">Auf diesem Gerät abmelden</button>
+      </div>
+      <p class="muted small" id="acctNote"></p>
+    </div>
+  </div>
+
+  <!-- KÜNDIGEN -->
+  <div class="modal" id="cancelModal" hidden>
+    <div class="modal-box card pay-box" role="dialog" aria-modal="true">
+      <button class="modal-x" type="button" data-close aria-label="Schließen">×</button>
+      <h3>Vertrag kündigen</h3>
+      <p class="muted">Du kannst dein Proportio-Pro-Abo jederzeit zum Ende der laufenden Laufzeit kündigen. Bis dahin bleibt dein Zugang bestehen.</p>
+      <div id="cancelBody"></div>
+    </div>
+  </div>
+
+  <!-- WIDERRUF -->
+  <div class="modal" id="withdrawModal" hidden>
+    <div class="modal-box card pay-box" role="dialog" aria-modal="true">
+      <button class="modal-x" type="button" data-close aria-label="Schließen">×</button>
+      <h3>Vertrag widerrufen</h3>
+      <p class="muted">Innerhalb von 14 Tagen nach Vertragsschluss kannst du ohne Angabe von Gründen widerrufen (sofern das Widerrufsrecht nicht vorzeitig erloschen ist – siehe <a href="widerruf.html" target="_blank">Widerrufsbelehrung</a>).</p>
+      <form id="withdrawForm" class="checkout">
+        <label>Name<input id="wdName" autocomplete="name" required /></label>
+        <label>E-Mail-Adresse des Kaufs<input id="wdEmail" type="email" autocomplete="email" required /></label>
+        <label>Bestellnummer oder Zugangsschlüssel<input id="wdRef" autocomplete="off" /></label>
+        <p class="error" id="wdError" hidden></p>
+        <button class="btn btn-primary" type="submit">Widerruf bestätigen</button>
+      </form>
+      <div id="wdDone" hidden></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+/* Selbst gehostete Schriften (SIL Open Font License 1.1) – keine Verbindung zu Google beim Seitenaufruf */
+@font-face { font-family: "Sora"; font-style: normal; font-weight: 600 800; font-display: swap; src: url("fonts/sora.woff2") format("woff2"); }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("fonts/manrope.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 500 700; font-display: swap; src: url("fonts/jetbrains-mono.woff2") format("woff2"); }

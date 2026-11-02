@@ -1,0 +1,54 @@
+# Veröffentlicht Proportio auf GitHub Pages.
+# Start: GitHub → Actions → "Website veröffentlichen" → "Run workflow".
+# Voraussetzung: Settings → Pages → Source: "GitHub Actions".
+name: Website veröffentlichen
+
+on:
+  workflow_dispatch:
+    inputs:
+      allow_demo:
+        description: "Auch im Testmodus (simulierte Kasse) veröffentlichen?"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prüfen, dass die echte Kasse eingerichtet ist
+        if: ${{ !inputs.allow_demo }}
+        run: |
+          if grep -q 'mode: "demo"' config.js; then
+            echo "::error::config.js steht noch auf mode: \"demo\". Erst Lemon Squeezy einrichten (siehe README → Live gehen) oder bewusst allow_demo wählen."
+            exit 1
+          fi
+          if grep -q '<mark>\[' impressum.html datenschutz.html agb.html widerruf.html; then
+            echo "::error::In den Rechtstexten sind noch Platzhalter [ … ]. Bitte ausfüllen."
+            exit 1
+          fi
+
+      - name: Website bauen
+        run: python3 tools/build.py --site _site
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
