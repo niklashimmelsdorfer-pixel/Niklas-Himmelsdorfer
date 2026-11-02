@@ -728,6 +728,13 @@ function renderResults() {
   renderTabs();
   $("metricsGrid").innerHTML = results.map((r) => {
     const [a, b] = r.range, pct = (v) => Math.min(100, Math.max(0, ((v - a) / (b - a)) * 100));
+    if (locked(r.id)) return `<article class="card metric locked" data-id="${r.id}" data-cat="${r.cat}" tabindex="0" ${tabFilter !== "all" && tabFilter !== r.cat ? "hidden" : ""}>
+      <div class="metric-top"><h4>${r.name}</h4><span class="badge pro">PRO</span></div>
+      <div class="val blurred" aria-hidden="true">${r.dec ? "0," + "0".repeat(r.dec) : "000"}${r.unit}</div>
+      <div class="scale blurred" aria-hidden="true"><div class="ideal" style="left:35%;width:22%"></div><div class="marker" style="left:52%"></div></div>
+      <p>${r.info}</p>
+      <span class="unlock"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 7V5a4 4 0 1 1 8 0v2h1v8H3V7h1zm2 0h4V5a2 2 0 1 0-4 0v2z" fill="currentColor"/></svg>Mit Pro freischalten</span>
+    </article>`;
     return `<article class="card metric${pinned === r.id ? " active" : ""}" data-id="${r.id}" data-cat="${r.cat}" tabindex="0" ${tabFilter !== "all" && tabFilter !== r.cat ? "hidden" : ""}>
       <div class="metric-top"><h4>${r.name}</h4><span class="badge ${cls(r.score)}">${fmt(r.score, 1)} · ${statusText(r)}</span></div>
       <div class="val">${fmt(r.value, r.dec)}${r.unit}</div>
@@ -738,6 +745,13 @@ function renderResults() {
   }).join("");
   const weak = results.filter((r) => r.status !== "ok").sort((x, y) => x.score * x.weight - y.score * y.weight).slice(0, 4);
   const strong = [...results].sort((x, y) => y.score - x.score || y.weight - x.weight).slice(0, 4);
+  $("insights").classList.toggle("locked", !isPro());
+  if (!isPro()) {
+    const fake = `<li aria-hidden="true"><span class="ins-top"><strong>████████ ███</strong><span class="badge good">0,0</span></span><span>███████ ██████ ████ ███████</span></li>`.repeat(3);
+    $("strengthList").innerHTML = fake; $("tipsList").innerHTML = fake;
+    renderCaption();
+    return;
+  }
   const item = (r, text) => `<li data-id="${r.id}" tabindex="0"><span class="ins-top"><strong>${r.name}</strong><span class="badge ${cls(r.score)}">${fmt(r.score, 1)}</span></span><span>${text}</span></li>`;
   $("strengthList").innerHTML = strong.map((r) => item(r, `${fmt(r.value, r.dec)}${r.unit} – Ideal ${rangeTxt(r)}`)).join("");
   $("tipsList").innerHTML = weak.length
@@ -772,8 +786,9 @@ function setActive(id) {
   }
   kick(); renderCaption();
 }
-function visibleIds() { return [...grid.querySelectorAll(".metric")].filter((el) => !el.hidden).map((el) => el.dataset.id); }
+function visibleIds() { return [...grid.querySelectorAll(".metric")].filter((el) => !el.hidden && !el.classList.contains("locked")).map((el) => el.dataset.id); }
 function pin(id, scroll) {
+  if (id && locked(id)) { const m = MODES[mode].metrics.find((x) => x.id === id); openPaywall(`„${m?.name}“ ist einer von ${MODES.front.metrics.length + MODES.side.metrics.length - FREE.size} Pro-Messwerten.`); return; }
   pinned = id;
   grid.querySelectorAll(".metric").forEach((m) => m.classList.toggle("active", m.dataset.id === pinned));
   setActive(id);
@@ -934,9 +949,10 @@ canvas.addEventListener("touchstart", (e) => { const s = cur(); if (!s) return; 
 
 // Metrik-Karten ↔ Bild
 const grid = $("metricsGrid");
-grid.addEventListener("mouseover", (e) => { const c = e.target.closest(".metric"); if (c) setActive(c.dataset.id); });
+grid.addEventListener("mouseover", (e) => { const c = e.target.closest(".metric"); if (c) setActive(locked(c.dataset.id) ? pinned : c.dataset.id); });
 grid.addEventListener("mouseleave", () => setActive(pinned));
-grid.addEventListener("focusin", (e) => { const c = e.target.closest(".metric"); if (c) setActive(c.dataset.id); });
+grid.addEventListener("focusin", (e) => { const c = e.target.closest(".metric"); if (c && !locked(c.dataset.id)) setActive(c.dataset.id); });
+grid.addEventListener("keydown", (e) => { const c = e.target.closest(".metric"); if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); c.click(); } });
 grid.addEventListener("click", (e) => {
   const c = e.target.closest(".metric"); if (!c) return;
   pin(pinned === c.dataset.id ? null : c.dataset.id);
@@ -946,7 +962,7 @@ for (const id of ["strengthList", "tipsList"]) $(id).addEventListener("click", (
 document.addEventListener("keydown", (e) => {
   if ($("workspace").hidden || !cur()?.ready || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
   if (e.key === "ArrowRight" || e.key === "ArrowLeft") { const r = $("workspace").getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; e.preventDefault(); stepMetric(e.key === "ArrowRight" ? 1 : -1); }
-  if (e.key === "Escape") pin(null);
+  if (e.key === "Escape" && !document.querySelector(".modal:not([hidden])")) pin(null);
 });
 $("tabs").addEventListener("click", (e) => {
   const t = e.target.closest(".tab"); if (!t) return;
@@ -1071,8 +1087,8 @@ $("tglAlign").addEventListener("change", () => { const s = cur(); if (s) fitView
 $("tglZoom").addEventListener("change", () => { const s = cur(); if (!s?.ready) return; const m = active && MODES[s.mode].metrics.find((x) => x.id === active); animateView(s, m ? metricView(s, m) : baseView(s)); });
 $("replaceBtn").addEventListener("click", () => { const s = cur(); if (s) { showError(""); startPlacing(s); } });
 $("placeBack").addEventListener("click", () => { const s = cur(); if (s?.placing > 0) { s.placing--; delete s.pts[SIDE_KP[s.placing].id]; updatePlaceBar(); draw(); } });
-$("saveBtn").addEventListener("click", saveToHistory);
-$("exportBtn").addEventListener("click", exportImage);
+$("saveBtn").addEventListener("click", () => (isPro() ? saveToHistory() : openPaywall("Verlauf und Vergleich deiner Analysen sind in Pro enthalten.")));
+$("exportBtn").addEventListener("click", () => (isPro() ? exportImage() : openPaywall("Der Export deiner Auswertung als Bild ist in Pro enthalten.")));
 $("clearHistory").addEventListener("click", () => { setHistory([]); renderHistory(); });
 document.querySelectorAll("#modeSeg .seg-btn").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
 document.querySelectorAll("#sexSeg .seg-btn").forEach((b) => b.addEventListener("click", () => {
@@ -1089,6 +1105,225 @@ $("sampleBtn").addEventListener("click", () => {
   img.src = CFG.sampleUrl || "assets/sample-front.jpg";
 });
 $("exportClose").addEventListener("click", () => ($("exportModal").hidden = true));
+// ======================= Abo & Freischaltung =======================
+const PAY = Object.assign({ mode: "demo", priceMonthly: 5, priceYearly: 50, currency: "€", portalUrl: "", checkoutMonthly: "", checkoutYearly: "" }, CFG.payment || {});
+const DEMO = PAY.mode !== "lemonsqueezy";
+// Kostenlose Basiswerte (frontal + Profil), alles andere ist Pro
+const FREE = new Set(["symmetry", "thirds", "canthal", "esr", "faceIndex", "convexity", "nasolabial", "nasofrontal", "eUpper", "gonial"]);
+const LKEY = "proportio-license";
+let ent = (() => { try { return JSON.parse(localStorage.getItem(LKEY)) || null; } catch { return null; } })();
+function isPro() { return !!ent && ent.status === "active" && (!ent.endsAt || ent.endsAt > Date.now()); }
+function locked(id) { return !isPro() && !FREE.has(id); }
+const money = (v) => `${fmt(v, Number.isInteger(v) ? 0 : 2)} ${PAY.currency}`;
+const dateTxt = (t) => new Date(t).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" });
+const planTxt = (p) => (p === "monthly" ? `Monatlich · ${money(PAY.priceMonthly)}` : `Jährlich · ${money(PAY.priceYearly)}`);
+
+function saveEnt(e) {
+  ent = e;
+  try { e ? localStorage.setItem(LKEY, JSON.stringify(e)) : localStorage.removeItem(LKEY); } catch { /* Speicher blockiert: Zugang gilt nur für diese Sitzung */ }
+  onEntChange();
+}
+function onEntChange() {
+  const pro = isPro();
+  $("accountBtn").textContent = pro ? "Pro ✓" : ent ? "Konto" : "Anmelden";
+  $("accountBtn").classList.toggle("is-pro", pro);
+  $("saveBtn").textContent = pro ? "Im Verlauf speichern" : "Im Verlauf speichern · Pro";
+  $("exportBtn").textContent = pro ? "Als Bild exportieren" : "Als Bild exportieren · Pro";
+  document.body.classList.toggle("pro", pro);
+  if (active && locked(active)) { pinned = null; active = null; }
+  if (cur()?.ready && !anim.scan) { renderResults(); draw(); }
+}
+
+let toastT = null;
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 3200); }
+function openModal(id) { document.querySelectorAll(".modal").forEach((m) => (m.hidden = m.id !== id)); const m = $(id); m.querySelector("input:not([readonly]):not([type=radio]):not([type=checkbox]), button")?.focus({ preventScroll: true }); }
+function closeModals() { document.querySelectorAll(".modal").forEach((m) => (m.hidden = true)); }
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-close]") || e.target.classList.contains("modal")) closeModals();
+  if (e.target.closest("[data-open-paywall]")) { const b = e.target.closest("[data-billing-plan]"); openPaywall(null, b?.dataset.billingPlan); }
+  if (e.target.closest("[data-open-license]")) openLicense();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.querySelector(".modal:not([hidden])")) closeModals(); });
+
+// Preise in Preistabelle und Paywall
+let billing = "yearly";
+function renderPrices() {
+  const y = billing === "yearly";
+  document.querySelectorAll("[data-price]").forEach((el) => (el.textContent = money(y ? PAY.priceYearly : PAY.priceMonthly)));
+  document.querySelectorAll("[data-period]").forEach((el) => (el.textContent = y ? " / Jahr" : " / Monat"));
+  document.querySelectorAll("[data-price-note]").forEach((el) => (el.textContent = y ? `entspricht ${money(Math.round((PAY.priceYearly / 12) * 100) / 100)} im Monat · 2 Monate gratis` : "monatlich kündbar"));
+  document.querySelectorAll("[data-price-y]").forEach((el) => (el.textContent = `${money(PAY.priceYearly)} / Jahr`));
+  document.querySelectorAll("[data-price-m]").forEach((el) => (el.textContent = `${money(PAY.priceMonthly)} / Monat`));
+  document.querySelectorAll("[data-price-ym]").forEach((el) => (el.textContent = money(Math.round((PAY.priceYearly / 12) * 100) / 100)));
+  document.querySelectorAll(".plan-pro [data-open-paywall]").forEach((el) => (el.dataset.billingPlan = billing));
+  document.querySelectorAll("[data-billing]").forEach((b) => { b.classList.toggle("active", b.dataset.billing === billing); b.setAttribute("aria-checked", b.dataset.billing === billing); });
+}
+document.querySelectorAll("[data-billing]").forEach((b) => b.addEventListener("click", () => { billing = b.dataset.billing; renderPrices(); }));
+
+function openPaywall(reason, plan) {
+  if (isPro()) { openAccount(); return; }
+  $("pwReason").textContent = reason || "Alle 35 Messwerte, jede Messung im Bild, Stärken, Potenzial und persönliche Tipps.";
+  const p = plan || billing;
+  document.querySelectorAll('input[name="pwPlan"]').forEach((r) => (r.checked = r.value === p));
+  $("coError").hidden = true;
+  $("coSubmit").disabled = false; $("coSubmit").textContent = DEMO ? "Zahlungspflichtig abonnieren (Test)" : "Weiter zur sicheren Kasse";
+  openModal("paywall");
+}
+const selPlan = () => document.querySelector('input[name="pwPlan"]:checked')?.value || "yearly";
+const coErr = (m) => { $("coError").textContent = m; $("coError").hidden = !m; };
+
+$("checkoutForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const plan = selPlan(), email = $("coEmail").value.trim();
+  if (DEMO && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return coErr("Bitte gib eine gültige E-Mail-Adresse ein.");
+  if (!$("coConsent").checked) return coErr("Bitte bestätige den sofortigen Beginn, damit wir dich direkt freischalten können.");
+  coErr("");
+  if (!DEMO) {
+    const url = plan === "monthly" ? PAY.checkoutMonthly : PAY.checkoutYearly;
+    if (!url) return coErr("Die Kasse ist noch nicht eingerichtet.");
+    const w = window.open(url, "_blank"); // ohne "noopener", sonst liefert open() immer null
+    if (w) w.opener = null; else location.href = url;
+    openLicense("Nach dem Kauf bekommst du deinen Zugangsschlüssel per E-Mail. Füge ihn hier ein, um Pro freizuschalten.");
+    return;
+  }
+  // Testmodus: simulierte Zahlung
+  const btn = $("coSubmit"); btn.disabled = true; btn.textContent = "Zahlung wird verarbeitet…";
+  await new Promise((r) => setTimeout(r, 1300));
+  const key = "DEMO-" + Array.from({ length: 3 }, () => Math.random().toString(36).slice(2, 6).toUpperCase()).join("-");
+  const now = Date.now();
+  saveEnt({ mode: "demo", status: "active", plan, key, email, startedAt: now, renewsAt: now + (plan === "monthly" ? 30 : 365) * 864e5, cancelled: false });
+  $("successKey").textContent = key;
+  openModal("successModal");
+});
+
+// Zugangsschlüssel (Lemon Squeezy License API: funktioniert ohne Server und ohne geheimen API-Key)
+const LS_API = "https://api.lemonsqueezy.com/v1/licenses";
+async function lsCall(path, params) {
+  const r = await fetch(`${LS_API}/${path}`, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(params) });
+  return r.json();
+}
+function entFromLs(key, j, instanceId) {
+  const st = j.license_key?.status, meta = j.meta || {};
+  if (PAY.storeId && meta.store_id !== PAY.storeId) throw new Error("Dieser Schlüssel gehört nicht zu Proportio.");
+  if (st === "expired") throw new Error("Dein Abo ist abgelaufen. Verlängere es, um Pro weiter zu nutzen.");
+  if (st === "disabled") throw new Error("Dieser Schlüssel ist deaktiviert.");
+  const plan = meta.variant_id === PAY.variantMonthly ? "monthly" : meta.variant_id === PAY.variantYearly ? "yearly" : /monat|month/i.test(meta.variant_name || "") ? "monthly" : "yearly";
+  return { mode: "lemonsqueezy", status: "active", key, instanceId, plan, email: meta.customer_email, endsAt: j.license_key?.expires_at ? Date.parse(j.license_key.expires_at) : null, checkedAt: Date.now() };
+}
+function openLicense(note) {
+  $("licenseError").hidden = true; $("licenseInput").value = "";
+  $("licenseModal").querySelector("p.muted").textContent = note || "Den Schlüssel findest du in der Bestätigungs-E-Mail nach deinem Kauf.";
+  openModal("licenseModal");
+}
+$("licenseForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const key = $("licenseInput").value.trim(), err = (m) => { $("licenseError").textContent = m; $("licenseError").hidden = !m; };
+  if (!key) return err("Bitte gib deinen Zugangsschlüssel ein.");
+  const btn = $("licenseSubmit"); btn.disabled = true; btn.textContent = "Wird geprüft…";
+  try {
+    if (DEMO) {
+      if (!/^DEMO-/i.test(key)) throw new Error("Im Testmodus funktionieren nur Testschlüssel (DEMO-…).");
+      const now = Date.now();
+      saveEnt({ mode: "demo", status: "active", plan: ent?.plan || "yearly", key: key.toUpperCase(), email: ent?.email || "", startedAt: now, renewsAt: now + 365 * 864e5, cancelled: false });
+    } else {
+      const j = await lsCall("activate", { license_key: key, instance_name: `Proportio Web – ${navigator.userAgentData?.platform || navigator.platform || "Browser"}` });
+      if (!j.activated) throw new Error(/limit/i.test(j.error || "") ? "Dieser Schlüssel ist schon auf der maximalen Anzahl an Geräten aktiv. Melde ein anderes Gerät ab und versuche es erneut." : "Dieser Schlüssel ist ungültig. Prüfe, ob du ihn vollständig kopiert hast.");
+      saveEnt(entFromLs(key, j, j.instance?.id));
+    }
+    closeModals(); toast("Pro ist freigeschaltet – viel Spaß!");
+  } catch (x) {
+    err(x instanceof TypeError ? "Keine Verbindung zum Zahlungsanbieter. Bitte prüfe deine Internetverbindung." : x.message);
+  } finally { btn.disabled = false; btn.textContent = "Freischalten"; }
+});
+
+// Regelmäßige Prüfung, ob das Abo noch aktiv ist (live); offline gilt eine Kulanz von 7 Tagen
+async function revalidate() {
+  if (!ent || ent.mode !== "lemonsqueezy" || ent.status !== "active" || Date.now() - (ent.checkedAt || 0) < 6 * 3600e3) return;
+  try {
+    const j = await lsCall("validate", { license_key: ent.key, instance_id: ent.instanceId });
+    if (!j.valid) { saveEnt({ ...ent, status: "inactive" }); toast("Dein Pro-Zugang ist nicht mehr aktiv."); return; }
+    saveEnt(entFromLs(ent.key, j, ent.instanceId));
+  } catch (x) {
+    if (!(x instanceof TypeError)) { saveEnt({ ...ent, status: "inactive" }); toast(x.message); }
+    else if (Date.now() - ent.checkedAt > 7 * 864e5) saveEnt({ ...ent, status: "inactive" });
+  }
+}
+
+// Konto
+function openAccount() {
+  if (!ent) { openLicense(); return; }
+  const pro = isPro(), mask = ent.key ? ent.key.slice(0, 5) + "•••• " + ent.key.slice(-4) : "–";
+  const status = !pro ? "Nicht aktiv" : ent.cancelled ? `Gekündigt – aktiv bis ${dateTxt(ent.endsAt)}` : "Aktiv";
+  const rows = [["Status", status], ["Tarif", planTxt(ent.plan)], ["E-Mail", ent.email || "–"], ["Zugangsschlüssel", mask]];
+  if (pro && !ent.cancelled && (ent.renewsAt || ent.endsAt)) rows.splice(2, 0, ["Nächste Verlängerung", dateTxt(ent.renewsAt || ent.endsAt)]);
+  $("acctInfo").innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+  $("acctNote").textContent = ent.mode === "demo" ? "Testmodus: Dieses Abo ist simuliert, es wurde nichts abgebucht." : "Rechnungen, Zahlungsmethode und Kündigung verwaltest du im Kundenportal unseres Zahlungsanbieters.";
+  $("manageBtn").hidden = !pro;
+  openModal("accountModal");
+}
+$("accountBtn").addEventListener("click", openAccount);
+$("manageBtn").addEventListener("click", () => (ent?.mode === "demo" ? openCancel() : window.open(PAY.portalUrl, "_blank", "noopener")));
+$("logoutBtn").addEventListener("click", async () => {
+  if (ent?.mode === "lemonsqueezy" && ent.instanceId) lsCall("deactivate", { license_key: ent.key, instance_id: ent.instanceId }).catch(() => {});
+  saveEnt(null); closeModals(); toast("Du wurdest auf diesem Gerät abgemeldet.");
+});
+
+// Kündigen (§ 312k BGB: Kündigungsbutton gut sichtbar erreichbar)
+function openCancel() {
+  const b = $("cancelBody");
+  if (ent?.mode === "demo" && isPro() && !ent.cancelled) {
+    b.innerHTML = `<dl class="acct"><div><dt>Vertrag</dt><dd>Proportio Pro · ${planTxt(ent.plan)}</dd></div><div><dt>E-Mail</dt><dd>${ent.email || "–"}</dd></div><div><dt>Kündigung wirksam zum</dt><dd>${dateTxt(ent.renewsAt)}</dd></div></dl>
+      <button class="btn btn-primary" type="button" id="cancelNow">Jetzt kündigen</button>`;
+    $("cancelNow").onclick = () => { saveEnt({ ...ent, cancelled: true, endsAt: ent.renewsAt }); b.innerHTML = `<p class="success-line">Deine Kündigung ist eingegangen. Pro bleibt bis zum ${dateTxt(ent.endsAt)} aktiv. Eine Bestätigung geht an ${ent.email || "deine E-Mail-Adresse"}.</p><button class="link-btn" type="button" id="expireNow">Testmodus: Zugang sofort beenden</button>`;
+      $("expireNow").onclick = () => { saveEnt({ ...ent, endsAt: Date.now() - 1 }); closeModals(); toast("Testzugang beendet."); }; };
+  } else if (ent?.mode === "demo" && ent.cancelled && isPro()) {
+    b.innerHTML = `<p class="success-line">Bereits gekündigt – Pro bleibt bis zum ${dateTxt(ent.endsAt)} aktiv.</p>`;
+  } else {
+    b.innerHTML = `<p>Die Kündigung erfolgt sicher über das Kundenportal unseres Zahlungsanbieters. Gib dort die E-Mail-Adresse deines Kaufs ein – du erhältst einen Anmeldelink und kannst das Abo mit einem Klick kündigen.</p>
+      <a class="btn btn-primary" href="${PAY.portalUrl}" target="_blank" rel="noopener">Zum Kundenportal – Abo kündigen</a>`;
+  }
+  openModal("cancelModal");
+}
+$("cancelLink").addEventListener("click", openCancel);
+
+// Widerrufsfunktion (Pflicht für Online-Verträge seit 19.06.2026)
+function openWithdraw() {
+  $("withdrawForm").hidden = false; $("wdDone").hidden = true; $("wdError").hidden = true;
+  if (ent?.email) $("wdEmail").value = ent.email;
+  if (ent?.key) $("wdRef").value = ent.key;
+  openModal("withdrawModal");
+}
+$("withdrawLink").addEventListener("click", openWithdraw);
+$("withdrawForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = $("wdName").value.trim(), email = $("wdEmail").value.trim(), ref = $("wdRef").value.trim();
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { $("wdError").textContent = "Bitte gib deinen Namen und eine gültige E-Mail-Adresse an."; $("wdError").hidden = false; return; }
+  const when = new Date().toLocaleString("de-DE");
+  const text = `Hiermit widerrufe ich den von mir abgeschlossenen Vertrag über Proportio Pro.\nName: ${name}\nE-Mail: ${email}\nBestellnummer/Schlüssel: ${ref || "–"}\nErklärt am: ${when}`;
+  $("withdrawForm").hidden = true; const d = $("wdDone"); d.hidden = false;
+  if (DEMO) {
+    if (ent) saveEnt({ ...ent, status: "inactive" });
+    d.innerHTML = `<p class="success-line">Testmodus: Dein Widerruf vom ${when} wurde erfasst. Pro ist deaktiviert, im Livebetrieb würde die Zahlung erstattet.</p>`;
+    return;
+  }
+  const mail = `mailto:${PAY.contactEmail}?subject=${encodeURIComponent("Widerruf Proportio Pro")}&body=${encodeURIComponent(text)}`;
+  d.innerHTML = `<p>Fast geschafft: Sende uns die folgende Widerrufserklärung. Mit dem Absenden ist die Frist gewahrt; du erhältst eine Eingangsbestätigung per E-Mail.</p>
+    <pre class="key-box wd-text"></pre>
+    <div class="acct-actions"><a class="btn btn-primary btn-sm" href="${mail}">Per E-Mail senden</a><button class="btn btn-ghost btn-sm" type="button" id="wdCopy">Text kopieren</button></div>
+    <p class="muted small">Empfänger: ${PAY.contactEmail}</p>`;
+  d.querySelector(".wd-text").textContent = text;
+  $("wdCopy").onclick = () => navigator.clipboard?.writeText(text).then(() => toast("Text kopiert."), () => toast("Bitte Text markieren und kopieren."));
+});
+if (location.hash === "#kuendigen") openCancel();
+if (location.hash === "#widerrufen") openWithdraw();
+$("insights").addEventListener("click", (e) => { if (!isPro() && e.target === $("insights")) openPaywall("Stärken, Potenzial und persönliche Tipps sind in Pro enthalten."); });
+
+if (DEMO) document.body.classList.add("demo");
+renderPrices();
+onEntChange();
+revalidate();
+if (new URLSearchParams(location.search).has("purchased")) openLicense("Danke für deinen Kauf! Deinen Zugangsschlüssel findest du in der Bestätigungs-E-Mail – füge ihn hier ein.");
+
 let resizeT = null;
 addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(() => draw(), 120); });
 setMode("front");
